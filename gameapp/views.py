@@ -98,7 +98,7 @@ def post_reply(request, id):
 						description = data_qs,
 						reply = post_reply
 						)
-		return redirect('/')
+		 	return redirect('/')
 
 		return render(request, 'index.html', {})
 
