@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block body_block %}<div class="container">
+  <div class="jumbotron">
+    <h3>Welcome to the CADVision !</h3>
+    {% if user.is_authenticated %}
+        <h3>Hello {{ user.username }}</h3>
+    {% else %}
+    	<div class="container" >
+		    <div class="jumbotron">
+		      <h1>Login</h1>
+		      	<form class="form-group" method="post" action="{% url 'gameapp:user_login' %}">
+		          {% csrf_token %}
+		          {# A more "HTML" way of creating the login form#}
+		          <label for="username">Username :</label>
+		          <input type="text" class="form-control-md" style="border-radius:5px; padding: 5.8px" name="username" placeholder="Username" required><br>
+		          <label for="password">Password &nbsp:</label>
+		          <input type="password" class="form-control-md" style="border-radius:5px; padding: 5.8px" name="password" placeholder="Password" required><br>
+		          <input type="submit" class="btn btn-primary" name="" value="Login">
+		      	</form>
+		     </div>
+	  	</div>
+    {% endif %}
+    {% if user.is_authenticated %}
+	    <form method="post" action="{% url 'gameapp:game_post' %}">
+		{% csrf_token %}
+	    {# A more "HTML" way of creating the login form#}
+		    <label for="Enter the post">Enter Post:</label>
+		    <input type="text" name="description" style="border-radius:5px; padding: 5.8px" placeholder="Please enter the post" required>
+		    <input type="submit" name="" class="btn btn-primary" value="Submit">
+	    </form></div>
+	{% endif %}
+    {% if user.is_authenticated and user.is_superuser %}
+	    <table class="table" style="background-color: #e9ecef">
+		  <tr>
+		    <th><h5>Please find the post description</h5></th>
+		    <th>Created At</th>
+		  </tr>
+			  {% for post in post_data %}
+			  <tr>
+			  	<div>
+				    <td style="padding-bottom: 20px"><h5> {{post.description}} </h5>
+				    	<div class="row">
+				    		<form method="post" action="{% url 'gameapp:like_count' id=post.id %}" >
+					    		{% csrf_token %}
+					    		<!-- <a href=""><i class="material-icons">thumb_up</i>  -->
+					    		<input type="submit" name="" class="btn btn-primary" value="like">
+					    		<span>{{post.like_count}}</span></a> &nbsp;&nbsp;&nbsp; 
+				    		</form>
+
+				    		<form method="post" action="{% url 'gameapp:dislike_count' id=post.id %}" >
+				    			{% csrf_token %}
+					    		<!-- <a href=""> <i class="material-icons">thumb_down</i> -->
+					    		<input type="submit" name=""  class="btn btn-primary" value="dislike"> 
+					    		<span>{{post.dislike_count}}</span></a>&nbsp;&nbsp;
+					    		{% for reply in post.reply %}
+					    			<span>{{reply.reply}}</span>
+					    		{% endfor %}
+				    		</form>
+						</div>	
+						</td>	    
+					</td>
+				</div>
+			    <td>{{post.created_at}}</td>
+			  </tr>
+			  {% endfor %}
+		</table>
+	{% elif user.is_authenticated %}
+		<table class="table" style="background-color: #e9ecef">
+		  <tr>
+		    <th>Please find the post description</th>
+		  </tr>
+			  {% for post in post_data %}
+			  <tr>
+			  	<div>
+				    <td style="padding-bottom: 20px">{{post.description}} 
+				    	<div class="row">
+				    		<form method="post" action="{% url 'gameapp:like_count' id=post.id %}" >
+					    		{% csrf_token %}
+					    		<!-- <a href=""><i class="material-icons">thumb_up</i>  -->
+					    		<input type="submit" name="" class="btn btn-primary" value="like">
+					    		&nbsp;&nbsp;&nbsp; 
+				    		</form>
+
+				    		<form method="post" action="{% url 'gameapp:dislike_count' id=post.id %}" >
+				    			{% csrf_token %}
+					    		<!-- <a href=""> <i class="material-icons">thumb_down</i> -->
+					    		<input type="submit" name=""  class="btn btn-primary" value="dislike"> 
+					    		</span></a>&nbsp;&nbsp;
+				    		</form>
+
+				    		<form method="post" action="{% url 'gameapp:post_reply' id=post.id %}">
+				    			{% csrf_token %}
+				    			<input style="height:32px" type="text" style="width: 150px ;padding:10px;" placeholder="Comment here" name="post_reply">
+							    <input type="submit" name="" class="btn btn-primary" value="send">
+							</form>
+						</div>	
+						</td>	    
+					</td>
+				</div>
+			  </tr>
+			  {% endfor %}
+			</table>
+	{% else %}
+	{% endif %}
+  </div>
+</div>{% endblock %}
